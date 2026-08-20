@@ -346,8 +346,7 @@ export default function Page() {
               <div style={sectionLabelStyle}>Contract</div>
               <p style={addressStyle}>{contractAddress || 'Configured server-side'}</p>
               <p style={smallMutedStyle}>
-                The public demo uses simulateWriteContract, matching the deployment pattern used by
-                GitJudge, so no private key is stored in Vercel.
+                The public demo uses simulateWriteContract, so no private key is stored in Vercel.
               </p>
             </div>
           </div>

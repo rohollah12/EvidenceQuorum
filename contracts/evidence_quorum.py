@@ -99,7 +99,7 @@ class EvidenceQuorum(gl.Contract):
 
     # ------------------------------------------------------------------
     # Convenience entrypoint for a frontend/demo.
-    # This is intentionally the same shape as GitJudge's analyze() flow:
+    # Convenience entrypoint for the public demo.
     # Vercel can simulate this write and immediately display the contract's
     # consensus result without needing a browser wallet.
     # ------------------------------------------------------------------
@@ -574,6 +574,6 @@ Return JSON only, with one item for EVERY source in the SAME order:
 
             return True
 
-        # This mirrors the currently-working GitJudge runner/API generation. The
-        # validator is intentionally custom rather than a format-only check.
+        # The validator is intentionally custom rather than a format-only check.
+        # It independently reruns the evidence analysis before comparing stable fields.
         return gl.vm.run_nondet_unsafe(perform_analysis, validator_fn)

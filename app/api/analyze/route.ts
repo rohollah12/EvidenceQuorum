@@ -132,8 +132,8 @@ async function callGenLayer(
 ) {
   const args = [claim, JSON.stringify(sources), JSON.stringify(policy)];
 
-  // Same proven server-route pattern used by GitJudge: prefer simulation so the
-  // public Vercel demo does not need to hold or expose a signing key.
+  // Prefer simulation so the public Vercel demo does not need to hold or expose
+  // a signing key.
   if (typeof client.simulateWriteContract === 'function') {
     const simulated = await client.simulateWriteContract({
       address: contractAddress as `0x${string}`,

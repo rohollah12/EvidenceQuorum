@@ -136,7 +136,7 @@ result JSON
 analyze(claim, urls_json, policy_json)
 ```
 
-The Vercel API route calls `analyze` through `simulateWriteContract`, following the same server-route pattern as GitJudge. This keeps the public demo usable without putting a private signing key in Vercel. **Simulation executes the contract logic for the demo but does not create a persistent on-chain case or transaction.** Use `create_case` + `evaluate_case` as real writes when you want the stateful workflow.
+The Vercel API route calls `analyze` through `simulateWriteContract`. This keeps the public demo usable without putting a private signing key in Vercel. **Simulation executes the contract logic for the demo but does not create a persistent on-chain case or transaction.** Use `create_case` + `evaluate_case` as real writes when you want the stateful workflow.
 
 ## Repository structure
 
@@ -172,7 +172,7 @@ To keep validator work bounded and agreement practical:
 
 ## 1. Deploy the contract in GenLayer Studio
 
-This project deliberately keeps the same deployment style as GitJudge.
+The project uses a lightweight Next.js server route to interact with the deployed Intelligent Contract.
 
 1. Open GenLayer Studio.
 2. Create/open an Intelligent Contract.
@@ -180,7 +180,7 @@ This project deliberately keeps the same deployment style as GitJudge.
 4. Deploy it.
 5. Copy the deployed contract address.
 
-The dependency header is the same currently working `py-genlayer` runner used by GitJudge and by the official GenLayer project boilerplate:
+The contract uses the `py-genlayer` runner pattern supported by the GenLayer project boilerplate:
 
 ```python
 # { "Depends": "py-genlayer:1jb45aa8ynh2a9c9xn3b7qqh8sm5q93hwfp7jqmwsfhh8jpz09h6" }
@@ -218,7 +218,7 @@ GENLAYER_CONTRACT_ADDRESS=<your deployed contract address>
 
 5. Deploy.
 
-No `GITHUB_TOKEN` is needed. No browser wallet or private key is needed for the public demo because `/app/api/analyze/route.ts` uses `simulateWriteContract`, matching GitJudge's proven deployment pattern.
+No `GITHUB_TOKEN` is needed. No browser wallet or private key is needed for the public demo because `/app/api/analyze/route.ts` uses `simulateWriteContract`.
 
 ## 4. Tests
 
