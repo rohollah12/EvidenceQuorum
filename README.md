@@ -229,6 +229,8 @@ The included direct tests cover:
 - three different URLs that collapse to one origin
 - disputed independent evidence
 - rejection of private/local URLs
+- SDK-aligned `gl.vm.UserError` validation reverts
+- missing-case reverts for both `get_case` and `evaluate_case`
 
 With the GenLayer development dependencies installed:
 
@@ -236,6 +238,10 @@ With the GenLayer development dependencies installed:
 pip install -r requirements.txt
 pytest tests/direct/ -v
 ```
+
+The repository also runs the same direct suite automatically in GitHub Actions via
+`.github/workflows/direct-tests.yml`. This provides a reproducible public test result for
+reviewers.
 
 You can also lint the contract with the current GenVM linter:
 

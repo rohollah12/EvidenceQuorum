@@ -81,7 +81,7 @@ class EvidenceQuorum(gl.Contract):
     @gl.public.write
     def evaluate_case(self, case_id: str) -> str:
         if case_id not in self.cases:
-            raise gl.UserError("Case not found")
+            raise gl.vm.UserError("Case not found")
 
         case = self.cases[case_id]
         urls = json.loads(case.urls_json)
@@ -122,7 +122,7 @@ class EvidenceQuorum(gl.Contract):
     @gl.public.view
     def get_case(self, case_id: str) -> dict:
         if case_id not in self.cases:
-            raise gl.UserError("Case not found")
+            raise gl.vm.UserError("Case not found")
         case = self.cases[case_id]
         return {
             "id": case.id,
@@ -148,42 +148,42 @@ class EvidenceQuorum(gl.Contract):
 
     def _validate_claim(self, claim: str) -> None:
         if not isinstance(claim, str):
-            raise gl.UserError("Claim must be a string")
+            raise gl.vm.UserError("Claim must be a string")
         clean = claim.strip()
         if len(clean) < 8:
-            raise gl.UserError("Claim is too short")
+            raise gl.vm.UserError("Claim is too short")
         if len(clean) > MAX_CLAIM_CHARS:
-            raise gl.UserError("Claim is too long")
+            raise gl.vm.UserError("Claim is too long")
 
     def _parse_urls(self, urls_json: str) -> list:
         try:
             urls = json.loads(urls_json)
         except Exception:
-            raise gl.UserError("Sources must be a JSON array")
+            raise gl.vm.UserError("Sources must be a JSON array")
 
         if not isinstance(urls, list):
-            raise gl.UserError("Sources must be a JSON array")
+            raise gl.vm.UserError("Sources must be a JSON array")
         if len(urls) < MIN_SOURCES or len(urls) > MAX_SOURCES:
-            raise gl.UserError("Provide between 2 and 5 sources")
+            raise gl.vm.UserError("Provide between 2 and 5 sources")
 
         normalized = []
         seen = {}
         for raw in urls:
             if not isinstance(raw, str):
-                raise gl.UserError("Every source must be a URL string")
+                raise gl.vm.UserError("Every source must be a URL string")
             url = raw.strip()
             if len(url) == 0 or len(url) > MAX_URL_CHARS:
-                raise gl.UserError("Invalid source URL length")
+                raise gl.vm.UserError("Invalid source URL length")
             low = url.lower()
             if not (low.startswith("https://") or low.startswith("http://")):
-                raise gl.UserError("Source URLs must use http or https")
+                raise gl.vm.UserError("Source URLs must use http or https")
             host = self._domain(url)
             if len(host) == 0:
-                raise gl.UserError("Source URL must include a host")
+                raise gl.vm.UserError("Source URL must include a host")
             if self._blocked_host(host):
-                raise gl.UserError("Local/private source URLs are not allowed")
+                raise gl.vm.UserError("Local/private source URLs are not allowed")
             if low in seen:
-                raise gl.UserError("Duplicate source URL")
+                raise gl.vm.UserError("Duplicate source URL")
             seen[low] = True
             normalized.append(url)
         return normalized
@@ -192,23 +192,23 @@ class EvidenceQuorum(gl.Contract):
         try:
             raw = json.loads(policy_json)
         except Exception:
-            raise gl.UserError("Policy must be valid JSON")
+            raise gl.vm.UserError("Policy must be valid JSON")
         if not isinstance(raw, dict):
-            raise gl.UserError("Policy must be a JSON object")
+            raise gl.vm.UserError("Policy must be a JSON object")
 
         try:
             min_sources = int(raw.get("min_independent_sources", 2))
             support_pct = int(raw.get("min_support_percent", 66))
             conflict_pct = int(raw.get("max_conflict_percent", 34))
         except Exception:
-            raise gl.UserError("Policy values must be integers")
+            raise gl.vm.UserError("Policy values must be integers")
 
         if min_sources < 2 or min_sources > MAX_SOURCES:
-            raise gl.UserError("min_independent_sources must be 2-5")
+            raise gl.vm.UserError("min_independent_sources must be 2-5")
         if support_pct < 51 or support_pct > 100:
-            raise gl.UserError("min_support_percent must be 51-100")
+            raise gl.vm.UserError("min_support_percent must be 51-100")
         if conflict_pct < 0 or conflict_pct > 49:
-            raise gl.UserError("max_conflict_percent must be 0-49")
+            raise gl.vm.UserError("max_conflict_percent must be 0-49")
 
         return {
             "min_independent_sources": min_sources,
@@ -343,7 +343,7 @@ Return JSON only, with one item for EVERY source in the SAME order:
 
             llm = gl.nondet.exec_prompt(prompt, response_format="json")
             if not isinstance(llm, dict):
-                raise gl.UserError("Evidence analyzer did not return a JSON object")
+                raise gl.vm.UserError("Evidence analyzer did not return a JSON object")
 
             by_index = {}
             raw_sources = llm.get("sources", [])

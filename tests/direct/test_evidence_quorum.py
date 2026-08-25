@@ -245,3 +245,26 @@ def test_rejects_private_urls(direct_vm, direct_deploy, direct_alice):
             json.dumps(["http://127.0.0.1/a", "https://source-b.example/b"]),
             _policy(),
         )
+
+
+def test_rejects_short_claim_with_sdk_user_error(direct_vm, direct_deploy, direct_alice):
+    contract = direct_deploy("contracts/evidence_quorum.py")
+    direct_vm.sender = direct_alice
+
+    with direct_vm.expect_revert("Claim is too short"):
+        contract.create_case(
+            "short",
+            json.dumps(["https://source-a.example/a", "https://source-b.example/b"]),
+            _policy(),
+        )
+
+
+def test_missing_case_paths_revert_cleanly(direct_vm, direct_deploy, direct_alice):
+    contract = direct_deploy("contracts/evidence_quorum.py")
+    direct_vm.sender = direct_alice
+
+    with direct_vm.expect_revert("Case not found"):
+        contract.get_case("999")
+
+    with direct_vm.expect_revert("Case not found"):
+        contract.evaluate_case("999")
